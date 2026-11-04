@@ -217,6 +217,9 @@ send-keys)
 		esac
 	fi
 	;;
+set-option)
+	printf 'set-option|%s\n' "${*:2}" >>"$MOCK_TMUX_LOG"
+	;;
 *) exit 1 ;;
 esac
 MOCK_TMUX
@@ -418,6 +421,7 @@ assert_eq "kiro: restore succeeds" "0" "$RESTORE_STATUS"
 assert_contains "kiro: resume command reaches the pane" "$(cat "$TMUX_LOG")" \
 	"send-keys|%30|command kiro-cli chat --resume-id '2d295295-e869-4a96-a1a0-c67e0b3b4a07'"
 assert_not_contains "kiro: saved cli_args are not replayed" "$(cat "$TMUX_LOG")" 'stale-prompt'
+assert_contains "kiro: scroll-on-clear is turned off for the pane" "$(cat "$TMUX_LOG")" 'set-option|-p -t %30 scroll-on-clear off'
 
 echo "== an unresolvable session id disables the cache instead of falling back to a name =="
 : >"$client_wait_log"

@@ -620,6 +620,12 @@ while read -r entry; do
 		continue
 	fi
 	claimed_panes="${claimed_panes}${pane_id}|"
+	# Local: Kiro's TUI clears the screen (ESC[2J) while redrawing; with
+	# scroll-on-clear tmux pushes that blank screen into history and leaves
+	# pane-height gaps. Turn it off for this pane only.
+	if [ "$tool" = "kiro" ]; then
+		tmux set-option -p -t "$pane_id" scroll-on-clear off 2>/dev/null || true
+	fi
 
 	restored=$((restored + 1))
 
